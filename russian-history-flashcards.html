@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQA Russian History 1855–1964 | Flashcards</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#c0392b;--gold:#c9a84c;--bg:#f5f0e8;--surface:#eee8dc;--card:#fffdf8;--border:#d0c8b0;--text:#1a1a1a;--muted:#6b6560;--hint:#9b9490}
+body{font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh}
+@media(prefers-color-scheme:dark){:root{--bg:#1a1814;--surface:#23211c;--card:#2a2820;--border:#3d3a30;--text:#f0ece0;--muted:#9b9490;--hint:#6b6560}}
+#app{max-width:700px;margin:0 auto;padding:1.5rem 1rem}
+.header{text-align:center;padding:2rem 0 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+.header h1{font-family:'IM Fell English',serif;font-size:28px;font-weight:400;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}
+.header p{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 1.5rem}
+.stat{background:var(--surface);border-radius:10px;padding:12px 8px;text-align:center;border:1px solid var(--border)}
+.stat-n{font-size:22px;font-weight:500;color:var(--text)}
+.stat-l{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:0.5px}
+.deck-wrap{margin-bottom:1rem}
+.deck-label{font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
+.deck-select{display:flex;flex-wrap:wrap;gap:5px}
+.deck-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:5px 10px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--muted);cursor:pointer;transition:all 0.15s}
+.deck-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.deck-btn:hover:not(.active){background:var(--surface);color:var(--text)}
+.progress-bar{height:3px;background:var(--surface);border-radius:2px;overflow:hidden;margin:0 0 6px}
+.progress-fill{height:100%;background:var(--gold);transition:width 0.4s ease;border-radius:2px}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:11px;color:var(--muted)}
+.flip-hint{font-size:11px;color:var(--hint);text-align:center;margin-bottom:8px;font-style:italic}
+.card-zone{perspective:900px;margin-bottom:1rem}
+.card-outer{width:100%;min-height:280px;position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform 0.45s cubic-bezier(.4,0,.2,1)}
+.card-outer.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--border);border-radius:16px;padding:2.5rem 2rem;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:var(--card);box-shadow:0 2px 20px rgba(0,0,0,0.06)}
+.card-back{transform:rotateY(180deg)}
+.card-type{font-size:10px;color:var(--hint);text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem}
+.card-q{font-family:'IM Fell English',serif;font-size:20px;line-height:1.5;color:var(--text);font-weight:400;max-width:480px}
+.card-a{font-size:14px;line-height:1.8;color:var(--text);max-width:480px}
+.card-a strong{color:var(--gold);font-weight:500}
+.card-deck{position:absolute;top:12px;right:14px;font-size:10px;color:var(--hint);font-family:'JetBrains Mono',monospace;max-width:160px;text-align:right}
+.card-hint-text{font-size:11px;color:var(--hint);margin-top:1.5rem;font-style:italic}
+.rating-row{display:flex;gap:8px;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
+.rating-btn{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 20px;border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all 0.15s;background:var(--card);color:var(--text);min-width:80px}
+.r-again{border-color:#c0392b;color:#c0392b}
+.r-hard{border-color:#e67e22;color:#e67e22}
+.r-good{border-color:#27ae60;color:#27ae60}
+.r-easy{border-color:#2980b9;color:#2980b9}
+.r-again:hover{background:#c0392b;color:#fff}
+.r-hard:hover{background:#e67e22;color:#fff}
+.r-good:hover{background:#27ae60;color:#fff}
+.r-easy:hover{background:#2980b9;color:#fff}
+.rating-labels{display:flex;gap:8px;justify-content:center;margin-bottom:1rem;flex-wrap:wrap}
+.rating-label{font-size:10px;color:var(--hint);min-width:80px;text-align:center}
+.done-screen{text-align:center;padding:4rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:16px}
+.done-screen h2{font-family:'IM Fell English',serif;font-size:26px;font-weight:400;margin-bottom:1rem}
+.done-screen p{font-size:13px;color:var(--muted);margin-bottom:2rem;line-height:1.7;max-width:400px;margin-left:auto;margin-right:auto}
+.btn-restart{font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px 28px;border:1px solid var(--border);border-radius:10px;background:var(--text);color:var(--bg);cursor:pointer;margin:0 6px}
+.btn-restart:hover{opacity:0.85}
+.btn-secondary{background:var(--card);color:var(--text)}
+.legend{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.5rem;font-size:12px;color:var(--muted);line-height:1.8}
+.legend strong{color:var(--text);font-weight:500}
+kbd{background:var(--border);border-radius:4px;padding:1px 5px;font-size:11px;font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <h1>Russian History 1855–1964</h1>
+    <p>AQA A Level · Spaced Repetition · 400 Cards</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n" id="s-new">0</div><div class="stat-l">new</div></div>
+    <div class="stat"><div class="stat-n" id="s-due">0</div><div class="stat-l">due</div></div>
+    <div class="stat"><div class="stat-n" id="s-learned">0</div><div class="stat-l">learned</div></div>
+    <div class="stat"><div class="stat-n" id="s-streak">0</div><div class="stat-l">streak</div></div>
+  </div>
+
+  <div class="deck-wrap">
+    <div class="deck-label">Filter by topic</div>
+    <div class="deck-select" id="deck-select"></div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+  <div class="nav-row"><span id="nav-pos">Card 0 of 0</span><span id="nav-deck">All Topics</span></div>
+  <div class="flip-hint">click card · or press <kbd>Space</kbd> to flip</div>
+
+  <div class="card-zone" id="card-zone">
+    <div class="card-outer" id="card" onclick="flipCard()">
+      <div class="card-face card-front">
+        <div class="card-type" id="card-tag"></div>
+        <div class="card-q" id="card-q">Loading...</div>
+        <div class="card-hint-text">click to reveal answer</div>
+        <div class="card-deck" id="card-deck-tag"></div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-type" id="card-tag-b"></div>
+        <div class="card-a" id="card-a"></div>
+        <div class="card-deck" id="card-deck-tag-b"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rating-row" id="rating-row" style="display:none">
+    <button class="rating-btn r-again" onclick="rate(0)">again <kbd>1</kbd></button>
+    <button class="rating-btn r-hard" onclick="rate(1)">hard <kbd>2</kbd></button>
+    <button class="rating-btn r-good" onclick="rate(2)">good <kbd>3</kbd></button>
+    <button class="rating-btn r-easy" onclick="rate(3)">easy <kbd>4</kbd></button>
+  </div>
+  <div class="rating-labels" id="rating-labels" style="display:none">
+    <div class="rating-label">didn't know</div>
+    <div class="rating-label">struggled</div>
+    <div class="rating-label">got it</div>
+    <div class="rating-label">knew it well</div>
+  </div>
+
+  <div id="done-screen" class="done-screen" style="display:none">
+    <h2>Session Complete ✓</h2>
+    <p id="done-msg"></p>
+    <button class="btn-restart" onclick="startSession()">Study again</button>
+    <button class="btn-restart btn-secondary" onclick="resetProgress()">Reset progress</button>
+  </div>
+
+  <div class="legend">
+    <strong>How spaced repetition works:</strong> Rate each card honestly after flipping. Cards you find hard come back sooner; easy cards return after days or weeks. Study 20–30 cards daily for best retention. Progress is saved in your browser. Use <kbd>Space</kbd> to flip, <kbd>1</kbd>–<kbd>4</kbd> to rate.
+  </div>
+</div>
+
+<script>
+const ALL_CARDS = [
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What is an Emancipation Edict?",a:"Alexander II's 1861 decree freeing 23 million serfs from bondage to the nobility and state."},
+  {d:"Tsarist 1855-1881",t:"Key Date",q:"When was the Emancipation of the Serfs?",a:"1861. Alexander II signed the Emancipation Edict on 19 February 1861."},
+  {d:"Tsarist 1855-1881",t:"Statistic",q:"How many serfs were emancipated in 1861?",a:"Approximately 23 million serfs — about 38% of the total population."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What were 'Redemption Payments'?",a:"Annual payments serfs had to make for 49 years after 1861 to 'buy' their allotments — averaging 6 roubles per year. Abolished 1907."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What was the 'Mir' (commune)?",a:"The peasant commune that held communal land, redistributed strip holdings, and bore collective tax responsibility after 1861."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What were Zemstva?",a:"Elected local government councils created by the 1864 Zemstvo Act, responsible for roads, schools, and medical care in rural areas."},
+  {d:"Tsarist 1855-1881",t:"Key Date",q:"When was the Zemstvo Act?",a:"1864. Created elected provincial and district councils."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What was the 'Great Reforms' period?",a:"Alexander II's reforms 1861–74: emancipation, zemstva, judicial reform, military reform, and educational expansion."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What was the 1864 Judicial Reform?",a:"Introduced independent courts, trial by jury, equality before the law, and an independent legal profession."},
+  {d:"Tsarist 1855-1881",t:"Key Event",q:"What was the Crimean War and when did it end?",a:"1853–56. Russia's defeat exposed military backwardness and directly motivated Alexander II's Great Reforms."},
+  {d:"Tsarist 1855-1881",t:"Statistic",q:"How many Russian casualties in the Crimean War?",a:"~450,000 dead (most from disease), out of ~700,000 deployed. A national humiliation."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What was 'Narodism' (Populism)?",a:"Movement in 1860s–70s where educated Russians ('intelligentsia') sought to rouse the peasantry to revolution and socialism."},
+  {d:"Tsarist 1855-1881",t:"Key Event",q:"What was 'Going to the People' (1874)?",a:"~2,000–3,000 young populists went to villages to spread revolutionary ideas; peasants mostly reported them to authorities."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What was 'Land and Liberty' (Zemlya i Volya)?",a:"Revolutionary organisation founded 1876; split into People's Will (terrorism) and Black Repartition (propaganda) in 1879."},
+  {d:"Tsarist 1855-1881",t:"Key Event",q:"How and when was Alexander II assassinated?",a:"1 March 1881, by People's Will terrorists using bombs thrown under his carriage in St Petersburg."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What was the 1874 Military Reform?",a:"Milyutin's reform: reduced active service from 25 years to 6 years and created an educated trained reserve."},
+  {d:"Tsarist 1855-1881",t:"Statistic",q:"What % of their former land did freed serfs receive in 1861?",a:"On average ~75–80% of their previous holdings — many allotments were too small for subsistence."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What was 'Autocracy' in Tsarist Russia?",a:"Unlimited royal power; the Tsar ruled by divine right with no constitutional limits, codified in the Fundamental Laws."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What was the Okhrana?",a:"Tsarist secret police formally established 1880; responsible for counter-espionage, surveillance, and suppression of dissent."},
+  {d:"Tsarist 1855-1881",t:"Key Event",q:"What was the Russo-Turkish War 1877–78?",a:"Russia defeated the Ottomans, but the Congress of Berlin 1878 forced Russia to return gains — a humiliation for Alexander II."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"Who were the Slavophiles?",a:"Russian intellectuals advocating Russia's unique Orthodox and communal path, rejecting Western rationalism and liberalism."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"Who were the Westernisers?",a:"Russian intellectuals arguing Russia should adopt Western institutions, rationalism, and capitalism — opposing Slavophiles."},
+  {d:"Tsarist 1855-1881",t:"Key Term",q:"What was the 'Third Section'?",a:"Secret police of Nicholas I, reorganised as the Okhrana in 1880; monitored political dissidents."},
+  {d:"Tsarist 1855-1881",t:"Key Event",q:"What was the Polish Uprising (1863)?",a:"January 1863: Polish revolt against Russian rule, suppressed harshly; led to intensified Russification of Poland."},
+  {d:"Tsarist 1881-1905",t:"Key Term",q:"What were 'Russification' policies?",a:"Alexander III's forced assimilation: imposing the Russian language, Orthodox church, and culture on minority peoples."},
+  {d:"Tsarist 1881-1905",t:"Key Term",q:"What was the 'Statute on Exceptional Measures' (1881)?",a:"Emergency law allowing governors to declare states of emergency, exile suspects, and close institutions without trial."},
+  {d:"Tsarist 1881-1905",t:"Key Term",q:"Who was Konstantin Pobedonostsev?",a:"Chief Procurator of the Holy Synod 1880–1905; key conservative adviser opposing all reform under Alexander III and Nicholas II."},
+  {d:"Tsarist 1881-1905",t:"Key Event",q:"What were the 1881 Pogroms?",a:"Widespread anti-Jewish violence following Alexander II's assassination; led to 1882 May Laws restricting Jewish movement."},
+  {d:"Tsarist 1881-1905",t:"Key Term",q:"What was the Trans-Siberian Railway?",a:"Railway linking Moscow to Vladivostok, built 1891–1916; 9,289 km — world's longest. Central to Witte's industrialisation."},
+  {d:"Tsarist 1881-1905",t:"Key Term",q:"Who was Sergei Witte?",a:"Finance Minister 1892–1903; led rapid industrialisation through railway construction, foreign investment, and the gold standard."},
+  {d:"Tsarist 1881-1905",t:"Statistic",q:"By how much did Russian industrial output grow 1890–1900?",a:"Approximately doubled: pig iron tripled; coal grew 100%; railway network expanded by 25,000 km in the 1890s."},
+  {d:"Tsarist 1881-1905",t:"Key Term",q:"What was the Social Revolutionary Party (SRs)?",a:"Party founded 1901 combining agrarian socialism with terrorism; the largest revolutionary party; believed in peasant revolution."},
+  {d:"Tsarist 1881-1905",t:"Key Term",q:"What was the Social Democratic Party (SDs)?",a:"Marxist party founded 1898; split in 1903 into Bolsheviks (Lenin) and Mensheviks (Martov) at the Second Congress."},
+  {d:"Tsarist 1881-1905",t:"Key Date",q:"When did the SD Party split into Bolsheviks and Mensheviks?",a:"1903, at the Second Congress in Brussels/London. Key dispute was party membership and central organisation."},
+  {d:"Tsarist 1881-1905",t:"Key Term",q:"What were the 'Zubatov Unions'?",a:"Police-sponsored trade unions 1901–03 to channel worker protest away from revolution — named after Sergei Zubatov."},
+  {d:"Tsarist 1881-1905",t:"Key Event",q:"What was the Russo-Japanese War 1904–05?",a:"Russia's humiliating defeat — losing Port Arthur, the Pacific Fleet, and the Battle of Mukden — fuelling the 1905 Revolution."},
+  {d:"Tsarist 1881-1905",t:"Key Event",q:"What was the Battle of Tsushima (1905)?",a:"Russian Baltic Fleet destroyed by Japan, May 1905; 38 of 45 Russian ships sunk or captured. Catastrophic blow."},
+  {d:"Tsarist 1881-1905",t:"Statistic",q:"How many were killed or wounded at Mukden (1905)?",a:"Russia: ~90,000 casualties; Japan: ~70,000. One of the largest land battles before World War One."},
+  {d:"Tsarist 1881-1905",t:"Key Term",q:"What was the 'Pale of Settlement'?",a:"Designated region in western Russian Empire where Jews were legally required to reside; established by Catherine II."},
+  {d:"Tsarist 1881-1905",t:"Key Event",q:"What was the 1891–92 Famine?",a:"Famine in the Volga region; ~400,000–500,000 died; exposed agricultural backwardness and galvanised the intelligentsia."},
+  {d:"1905 Revolution",t:"Key Event",q:"What was 'Bloody Sunday' and when did it occur?",a:"22 January 1905. Father Gapon led ~150,000 workers to petition the Tsar; troops opened fire killing 130–200 people."},
+  {d:"1905 Revolution",t:"Key Term",q:"What was the October Manifesto (1905)?",a:"Nicholas II's concession granting civil liberties, a broadened franchise, and a Duma with legislative powers. Drafted by Witte."},
+  {d:"1905 Revolution",t:"Key Date",q:"When was the October Manifesto issued?",a:"17 October 1905, ending the general strike and splitting the opposition into those who accepted and those who rejected it."},
+  {d:"1905 Revolution",t:"Key Term",q:"What was the Soviet of Workers' Deputies (1905)?",a:"Council of elected worker representatives, emerging first in St Petersburg, coordinating the 1905 general strike."},
+  {d:"1905 Revolution",t:"Key Term",q:"What was the Duma?",a:"Russia's parliament created by the October Manifesto. Four Dumas met 1906–17; the first two were dissolved early."},
+  {d:"1905 Revolution",t:"Key Event",q:"What was the Potemkin Mutiny (1905)?",a:"June 1905: sailors on battleship Potemkin mutinied over rotten meat — a symbol of military discontent."},
+  {d:"1905 Revolution",t:"Statistic",q:"How many workers struck in the October 1905 general strike?",a:"Approximately 2 million workers across Russia halted transport, industry, and utilities."},
+  {d:"1905 Revolution",t:"Key Term",q:"What were the Fundamental Laws (1906)?",a:"Constitution of April 1906 preserving the Tsar's autocratic powers; the Duma could not initiate legislation."},
+  {d:"1905 Revolution",t:"Key Term",q:"Who were the 'Kadets' (Constitutional Democrats)?",a:"Liberal party formed 1905, led by Milyukov; wanted parliamentary democracy and the rule of law; dominated First Duma."},
+  {d:"1905 Revolution",t:"Key Term",q:"Who were the 'Octobrists'?",a:"Conservative liberal party accepting the October Manifesto; supported a limited constitutional monarchy."},
+  {d:"Tsarist 1905-1914",t:"Key Term",q:"Who was Stolypin and what were his 'wagers'?",a:"Prime Minister 1906–11. His 'wager on the strong' aimed to create prosperous peasant landowners (kulaks) as a conservative base."},
+  {d:"Tsarist 1905-1914",t:"Key Term",q:"What was the Stolypin Coup of 1907?",a:"June 1907: Stolypin illegally dissolved the Second Duma and changed the electoral law to favour conservatives."},
+  {d:"Tsarist 1905-1914",t:"Key Date",q:"When was Stolypin assassinated?",a:"September 1911 in Kiev, shot by SR double-agent Dmitry Bogrov."},
+  {d:"Tsarist 1905-1914",t:"Statistic",q:"How many peasants migrated to Siberia under Stolypin's reforms?",a:"Over 3 million 1907–14 migrated; about 500,000 returned having failed — net gain for settlement."},
+  {d:"Tsarist 1905-1914",t:"Statistic",q:"How many were executed under Stolypin's field courts-martial?",a:"~3,000–3,500 revolutionaries executed 1906–07 — the gallows became known as 'Stolypin's necktie'."},
+  {d:"Tsarist 1905-1914",t:"Key Event",q:"What was the Lena Goldfields Massacre (1912)?",a:"April 1912: troops shot striking goldfield workers in Siberia, killing ~270; reignited revolutionary movement."},
+  {d:"Tsarist 1905-1914",t:"Statistic",q:"How many workers struck in Russia in 1913?",a:"~1.3 million workers — near 1905 levels, showing renewed labour militancy before the war."},
+  {d:"Tsarist 1905-1914",t:"Key Term",q:"Who was Rasputin?",a:"Grigory Rasputin, a Siberian mystic who influenced the court by apparently relieving Alexei's haemophilia; murdered December 1916."},
+  {d:"Tsarist 1905-1914",t:"Key Term",q:"What was the Union of Russian People?",a:"Far-right nationalist organisation ('Black Hundreds') supporting autocracy; organised pogroms against Jews and revolutionaries."},
+  {d:"WW1 & Feb Revolution",t:"Key Date",q:"When did Russia enter World War One?",a:"August 1914, following Austria's declaration of war on Serbia and Germany's declaration of war on Russia."},
+  {d:"WW1 & Feb Revolution",t:"Key Event",q:"What was the Battle of Tannenberg (1914)?",a:"August 1914: Germany destroyed two Russian armies; ~95,000 taken prisoner. General Samsonov committed suicide."},
+  {d:"WW1 & Feb Revolution",t:"Statistic",q:"Total Russian military casualties by 1917?",a:"~5.5–7 million killed, wounded, or captured by early 1917."},
+  {d:"WW1 & Feb Revolution",t:"Key Event",q:"What was the Brusilov Offensive (1916)?",a:"June–September 1916: General Brusilov's innovative offensive captured 400,000+ Austrian prisoners — Russia's greatest WW1 success."},
+  {d:"WW1 & Feb Revolution",t:"Key Term",q:"What was the Progressive Bloc (1915)?",a:"Duma coalition demanding a 'government of public confidence'; Nicholas II refused and prorogued the Duma."},
+  {d:"WW1 & Feb Revolution",t:"Key Event",q:"What was the February Revolution?",a:"23 February 1917: International Women's Day bread riots in Petrograd escalated; garrison troops refused to fire on crowds."},
+  {d:"WW1 & Feb Revolution",t:"Key Date",q:"When did Nicholas II abdicate?",a:"2 March 1917, abdicating for himself and his son in favour of his brother Michael, who refused."},
+  {d:"WW1 & Feb Revolution",t:"Key Term",q:"What was 'Dual Power' (Dvoevlastie)?",a:"March–October 1917: Provisional Government and Petrograd Soviet both claimed authority; neither was fully sovereign."},
+  {d:"WW1 & Feb Revolution",t:"Key Term",q:"What was Soviet Order Number 1 (1917)?",a:"Issued 1 March 1917: subordinated military officers to soldier committees; crippled the Provisional Government's control of the army."},
+  {d:"WW1 & Feb Revolution",t:"Key Term",q:"What were Lenin's 'April Theses'?",a:"Lenin's programme on return from exile (April 1917): no support for Provisional Government, immediate peace, land to peasants, soviets to power."},
+  {d:"WW1 & Feb Revolution",t:"Key Event",q:"What was the July Days (1917)?",a:"3–5 July 1917: armed demonstrations in Petrograd against Provisional Government; suppressed, Lenin fled to Finland."},
+  {d:"WW1 & Feb Revolution",t:"Key Event",q:"What was the Kornilov Affair (August 1917)?",a:"General Kornilov marched troops on Petrograd; Kerensky released Bolsheviks to resist — restoring Bolshevik credibility."},
+  {d:"WW1 & Feb Revolution",t:"Statistic",q:"How many Bolshevik members were there by October 1917?",a:"~200,000–300,000 members, up from ~24,000 in January 1917."},
+  {d:"WW1 & Feb Revolution",t:"Key Term",q:"Who was Kerensky?",a:"Leader of Provisional Government from July 1917; Socialist Revolutionary; failed to end the war, losing popular support."},
+  {d:"WW1 & Feb Revolution",t:"Key Event",q:"What was 'Tsar assumes Command' (1915)?",a:"Nicholas II took personal command of the army in August 1915 — made him personally responsible for all subsequent military failures."},
+  {d:"October Revolution",t:"Key Date",q:"When did the Bolsheviks seize power?",a:"25 October 1917 (7 November NS). The Military Revolutionary Committee occupied key Petrograd points; Winter Palace taken overnight."},
+  {d:"October Revolution",t:"Key Term",q:"What was the Military Revolutionary Committee (MRC)?",a:"Trotsky's organisation within the Petrograd Soviet, used to plan and execute the October seizure of power."},
+  {d:"October Revolution",t:"Key Term",q:"What was the Decree on Land (1917)?",a:"Passed 26 October 1917: abolished private landownership, transferring land to peasant committees — ratifying what peasants were already doing."},
+  {d:"October Revolution",t:"Key Term",q:"What was the Decree on Peace (1917)?",a:"Passed 26 October 1917: called for immediate armistice and peace without annexations or indemnities."},
+  {d:"October Revolution",t:"Key Term",q:"What was the Constituent Assembly?",a:"Democratically elected parliament meeting January 1918; SRs won majority; Bolsheviks dispersed it after one day."},
+  {d:"October Revolution",t:"Statistic",q:"What % of votes did Bolsheviks win in Constituent Assembly elections?",a:"Only 24% — SRs won 38%. This is why Lenin dispersed it on 5–6 January 1918."},
+  {d:"October Revolution",t:"Key Term",q:"What was the Treaty of Brest-Litovsk (1918)?",a:"Peace treaty March 1918: Russia surrendered Poland, Baltic states, Ukraine, Finland — losing 34% of population, 32% of farmland."},
+  {d:"October Revolution",t:"Key Date",q:"When was the Treaty of Brest-Litovsk signed?",a:"3 March 1918. Led to Left SR rebellion and split in the revolutionary coalition."},
+  {d:"October Revolution",t:"Key Term",q:"What was 'War Communism' (1918–21)?",a:"Bolshevik economic system: nationalisation of industry, forced grain requisitioning (prodrazvyorstka), centralised control."},
+  {d:"October Revolution",t:"Key Term",q:"What was the Cheka?",a:"Bolshevik secret police created December 1917, led by Dzerzhinsky; carried out Red Terror, executing thousands without trial."},
+  {d:"October Revolution",t:"Key Term",q:"What was 'Sovnarkom'?",a:"Council of People's Commissars — the Bolshevik government created October 1917, headed by Lenin."},
+  {d:"Civil War 1918-21",t:"Key Event",q:"When was the Russian Civil War?",a:"1918–21. Reds (Bolsheviks) vs Whites (counter-revolutionaries) plus foreign intervention forces."},
+  {d:"Civil War 1918-21",t:"Key Term",q:"Who were the 'Whites'?",a:"Anti-Bolshevik forces including Tsarist officers, SRs, liberals, and foreign interventionists — disunited by ideology and geography."},
+  {d:"Civil War 1918-21",t:"Key Term",q:"What was the Red Army?",a:"Bolshevik military force created January 1918 by Trotsky; conscripted peasants, used ex-Tsarist officers with political commissars."},
+  {d:"Civil War 1918-21",t:"Statistic",q:"How many died in the Russian Civil War total?",a:"Estimated 7–12 million dead from combat, famine, and disease 1918–21; 2 million emigrated."},
+  {d:"Civil War 1918-21",t:"Key Event",q:"What was the 'Red Terror' (1918)?",a:"Mass executions by Cheka following SR assassination attempt on Lenin (August 1918); thousands of 'class enemies' shot."},
+  {d:"Civil War 1918-21",t:"Key Event",q:"When was the Royal Family executed?",a:"16–17 July 1918 in Ekaterinburg — Nicholas II, Alexandra, and their five children shot by Bolshevik guards."},
+  {d:"Civil War 1918-21",t:"Key Term",q:"What was 'Prodrazvyorstka'?",a:"Forced grain requisitioning 1918–21: armed detachments seized grain from peasants, causing massive peasant resistance."},
+  {d:"Civil War 1918-21",t:"Key Event",q:"What was the Kronstadt Rebellion (1921)?",a:"March 1921: Kronstadt sailors rebelled against Bolshevik grain seizures and lack of Soviet democracy; crushed by Red Army."},
+  {d:"Civil War 1918-21",t:"Statistic",q:"How many were in the Red Army by end of Civil War (1921)?",a:"~5 million soldiers — built from scratch in just three years."},
+  {d:"Civil War 1918-21",t:"Key Event",q:"What was the 1921 Famine?",a:"Famine in Volga region 1921–22 killing ~5 million; caused by drought, war damage, and grain requisitioning."},
+  {d:"Civil War 1918-21",t:"Key Term",q:"Who were the Czech Legion?",a:"~50,000 Czech/Slovak POWs; took control of Trans-Siberian Railway in 1918, fighting the Reds and enabling White advances."},
+  {d:"Civil War 1918-21",t:"Key Event",q:"What was the Allied Intervention (1918–20)?",a:"British, French, American, and Japanese troops supported the Whites; never coordinated effectively; withdrawn by 1920."},
+  {d:"Civil War 1918-21",t:"Key Term",q:"What was the 'Green Army'?",a:"Peasant guerrilla forces fighting both Reds and Whites; most prominent in Ukraine under anarchist leader Makhno."},
+  {d:"NEP & 1920s",t:"Key Term",q:"What was the NEP (New Economic Policy)?",a:"Lenin's 1921 policy replacing grain requisitioning with a tax in kind; allowed small private trade and market forces."},
+  {d:"NEP & 1920s",t:"Key Date",q:"When was the NEP introduced?",a:"March 1921, at the Tenth Party Congress — the same week as the Kronstadt Rebellion."},
+  {d:"NEP & 1920s",t:"Key Term",q:"What were 'Nepmen'?",a:"Private traders and small businessmen flourishing under the NEP 1921–28 — resented by orthodox Bolsheviks as class enemies."},
+  {d:"NEP & 1920s",t:"Key Term",q:"What was the 'scissors crisis' (1923)?",a:"Economic crisis where agricultural prices fell and industrial prices rose sharply, squeezing peasants — highlighted NEP inefficiency."},
+  {d:"NEP & 1920s",t:"Key Date",q:"When did Lenin die?",a:"21 January 1924, aged 53, after a series of strokes. Led to power struggle between Stalin, Trotsky, Zinoviev, Kamenev, Bukharin."},
+  {d:"NEP & 1920s",t:"Key Term",q:"What was Lenin's 'Testament' (1922–23)?",a:"Lenin's letter warning against Stalin's power and rudeness, suggesting he be removed as General Secretary — suppressed by Stalin."},
+  {d:"NEP & 1920s",t:"Key Term",q:"What was 'Socialism in One Country'?",a:"Stalin's doctrine (from 1924): socialism could be built in the USSR alone, without world revolution — opposing Trotsky's Permanent Revolution."},
+  {d:"NEP & 1920s",t:"Key Term",q:"Who was Bukharin?",a:"Leading Bolshevik theorist; allied with Stalin 1924–28, supporting the NEP and gradual transformation; opposed collectivisation; shot 1938."},
+  {d:"NEP & 1920s",t:"Key Event",q:"When was Trotsky expelled from the party?",a:"November 1927; deported from USSR 1929; assassinated in Mexico 1940 by Stalinist agent."},
+  {d:"NEP & 1920s",t:"Statistic",q:"By 1926 how had Soviet industrial output compared to 1913?",a:"By 1926 Soviet industrial output roughly equalled the 1913 Tsarist level — recovery under the NEP."},
+  {d:"NEP & 1920s",t:"Key Term",q:"What was 'Democratic Centralism'?",a:"Bolshevik principle: free discussion before decisions, then absolute discipline — Lenin used to suppress factional activity."},
+  {d:"NEP & 1920s",t:"Statistic",q:"What % of retail trade was in private hands under NEP by 1923?",a:"~75–80% of retail trade was in private hands — a market economy within a socialist framework."},
+  {d:"NEP & 1920s",t:"Key Term",q:"What was 'Smychka'?",a:"The 'link' or alliance between workers and peasants — core to Leninist strategy; NEP was meant to preserve it."},
+  {d:"NEP & 1920s",t:"Key Term",q:"What was 'Komsomol'?",a:"Young Communist League for 14–28 year olds; vehicle for political mobilisation, education, and cultural transformation."},
+  {d:"Stalin's Rise",t:"Key Term",q:"What was the 'General Secretaryship'?",a:"Stalin became General Secretary of the Communist Party in April 1922 — gave him control of party appointments."},
+  {d:"Stalin's Rise",t:"Key Event",q:"What was the 1923 'Triumvirate'?",a:"Stalin, Zinoviev, and Kamenev allied against Trotsky 1923–25; then Stalin and Bukharin allied against Zinoviev-Kamenev 1925–27."},
+  {d:"Stalin's Rise",t:"Key Term",q:"What were 'Lenin Enrolments' (1924)?",a:"Mass recruitment after Lenin's death — 240,000 new workers enrolled, diluting educated intellectuals and strengthening Stalin's base."},
+  {d:"Stalin's Rise",t:"Key Term",q:"What was the 'Left Opposition'?",a:"Trotsky's faction from 1923 criticising bureaucratisation; united opposition 1926–27 with Zinoviev and Kamenev."},
+  {d:"Stalin's Rise",t:"Key Term",q:"What was the 'Right Opposition'?",a:"Bukharin, Rykov, and Tomsky 1928–29 opposing forced collectivisation; defeated by Stalin 1929."},
+  {d:"Stalin's Rise",t:"Key Event",q:"When did Stalin achieve supreme power?",a:"By 1929 — Trotsky exiled, Bukharin removed. Often called 'the Year of the Great Turn'."},
+  {d:"Collectivisation",t:"Key Term",q:"What was Collectivisation?",a:"Stalin's policy from 1929 of merging peasant smallholdings into collective farms (kolkhozy) to extract grain for industrialisation."},
+  {d:"Collectivisation",t:"Key Date",q:"When did mass collectivisation begin?",a:"1929 ('Year of the Great Turn'). By 1933 over 60% of peasant households were collectivised."},
+  {d:"Collectivisation",t:"Key Term",q:"What were Kolkhozy?",a:"Collective farms where peasants pooled land and labour; paid in 'workday units' (trudodni); state set output quotas."},
+  {d:"Collectivisation",t:"Key Term",q:"What were Sovkhozy?",a:"State farms where workers were paid wages; larger than kolkhozy; employed former landless labourers."},
+  {d:"Collectivisation",t:"Key Term",q:"What was 'Dekulakisation'?",a:"Campaign to liquidate kulaks 'as a class': ~1.8 million deported to labour camps 1930–33; thousands executed."},
+  {d:"Collectivisation",t:"Key Term",q:"What was a 'Kulak'?",a:"A wealthy peasant owning more land or animals than average; by 1930 the term applied to any peasant resisting collectivisation."},
+  {d:"Collectivisation",t:"Statistic",q:"How many died in the Soviet Famine of 1932–33?",a:"Estimated 5–7 million deaths, mainly in Ukraine (Holodomor), Kazakhstan, and the North Caucasus."},
+  {d:"Collectivisation",t:"Key Term",q:"What was the Holodomor?",a:"Ukrainian Famine 1932–33: 3.5–5 million Ukrainians died; many historians classify it as genocide due to deliberate grain seizure."},
+  {d:"Collectivisation",t:"Statistic",q:"How did livestock numbers change during collectivisation?",a:"Cattle fell from 67 million (1929) to 38 million (1933); horses from 34 million to 17 million — peasants slaughtered animals rather than hand them over."},
+  {d:"Collectivisation",t:"Statistic",q:"What % of Soviet households were collectivised by 1937?",a:"Over 93% of peasant households collectivised by 1937."},
+  {d:"Collectivisation",t:"Key Event",q:"What was the 'Dizzy with Success' article (1930)?",a:"Stalin's March 1930 article blaming local officials for excesses — allowing a temporary retreat before re-acceleration."},
+  {d:"Collectivisation",t:"Key Term",q:"What were 'Twenty-Five Thousanders'?",a:"25,000 urban communist workers sent to villages in 1930 to enforce collectivisation and run collective farms."},
+  {d:"Five Year Plans",t:"Key Term",q:"What was the First Five Year Plan (1928–32)?",a:"Plan for rapid industrialisation: focused on heavy industry — steel, coal, iron, machinery. Officially 'completed' in 4 years."},
+  {d:"Five Year Plans",t:"Key Date",q:"When did the First Five Year Plan begin?",a:"October 1928. Stalin declared it complete in December 1932 — 9 months early, though many targets were missed."},
+  {d:"Five Year Plans",t:"Key Term",q:"What was Gosplan?",a:"State Planning Commission: central body setting economic targets and allocating resources for the Five Year Plans."},
+  {d:"Five Year Plans",t:"Statistic",q:"By how much did steel output grow 1928–1937?",a:"From 4 million tonnes (1928) to 18 million tonnes (1937) — over four times growth in a decade."},
+  {d:"Five Year Plans",t:"Statistic",q:"How did coal output change during the Five Year Plans?",a:"Coal production rose from 35 million tonnes (1928) to 128 million tonnes (1937)."},
+  {d:"Five Year Plans",t:"Key Event",q:"What was Magnitogorsk?",a:"Showcase steel city built from scratch in the Urals 1929–32; symbol of industrialisation; employed 250,000 workers at peak."},
+  {d:"Five Year Plans",t:"Key Term",q:"What was 'Stakhanovism'?",a:"Labour movement inspired by miner Stakhanov who reportedly mined 102 tonnes of coal in one shift (1935) — used to raise norms."},
+  {d:"Five Year Plans",t:"Key Date",q:"When did Stakhanov's record shift take place?",a:"31 August 1935. Launched a nationwide Stakhanovite movement to boost production quotas."},
+  {d:"Five Year Plans",t:"Statistic",q:"How many workers were employed in Soviet industry by 1937?",a:"~7 million industrial workers by 1937, up from ~3 million in 1928."},
+  {d:"Five Year Plans",t:"Key Term",q:"What was Dneprostroi?",a:"Giant hydroelectric dam on the Dnieper River, completed 1932; one of the world's largest; symbol of Soviet achievement."},
+  {d:"Five Year Plans",t:"Key Term",q:"What was 'Socialist Realism'?",a:"Official Soviet art doctrine from 1934: art must depict reality in its 'revolutionary development', showing heroic socialist construction."},
+  {d:"Five Year Plans",t:"Key Term",q:"What was the Donbass?",a:"Donetsk coal basin in eastern Ukraine; central to Soviet industrialisation; produced over 60% of Soviet coal."},
+  {d:"Five Year Plans",t:"Key Event",q:"What was the White Sea Canal (Belomorkanal)?",a:"Built 1931–33 using Gulag labour: 170 km canal in northern Russia; ~25,000 workers died in construction."},
+  {d:"The Terror",t:"Key Event",q:"What was the Kirov Murder (1934)?",a:"Sergei Kirov, Leningrad party chief, assassinated 1 December 1934; used by Stalin as pretext for the Great Terror."},
+  {d:"The Terror",t:"Key Term",q:"What were the 'Show Trials'?",a:"1936–38 Moscow Trials: Old Bolsheviks (Zinoviev, Kamenev, Bukharin) publicly confessed to treason before being executed."},
+  {d:"The Terror",t:"Key Date",q:"When were the three Moscow Show Trials?",a:"August 1936 (Zinoviev/Kamenev), January 1937 (Pyatakov), March 1938 (Bukharin/Rykov)."},
+  {d:"The Terror",t:"Key Term",q:"What was the 'Great Purge' (Yezhoshchina)?",a:"Mass terror 1936–38 under NKVD chief Yezhov: ~750,000 executed, 1.3 million arrested; decimated the party and military."},
+  {d:"The Terror",t:"Statistic",q:"How many were executed during the Great Terror (1937–38)?",a:"~750,000–760,000 people executed. ~1.3 million more sent to the Gulag."},
+  {d:"The Terror",t:"Key Term",q:"What was the NKVD?",a:"People's Commissariat for Internal Affairs — Stalin's secret police; ran Gulags and carried out the Great Terror."},
+  {d:"The Terror",t:"Key Term",q:"What was the 'Gulag'?",a:"System of Soviet labour camps: ~1.6 million prisoners by 1939; total deaths estimated 1.5–1.8 million 1930–53."},
+  {d:"The Terror",t:"Statistic",q:"What proportion of Red Army officers were purged 1937–38?",a:"Three of five Marshals and ~35,000 officers (roughly half the officer corps) were removed — shot or imprisoned."},
+  {d:"The Terror",t:"Key Term",q:"What was the 'Nomenklatura'?",a:"List of key positions requiring party approval for appointment — gave Stalin ultimate control over the Soviet elite."},
+  {d:"The Terror",t:"Key Term",q:"Who was Yezhov?",a:"NKVD chief 1936–38 who ran the Great Terror; arrested 1939, shot 1940 — gave his name to the 'Ezhovshchina'."},
+  {d:"The Terror",t:"Key Term",q:"What was Order No. 00447 (1937)?",a:"NKVD order setting regional quotas for executions and deportations — centralised bureaucratic organisation of mass murder."},
+  {d:"The Terror",t:"Key Term",q:"What was a 'Troika'?",a:"Three-person committees (NKVD officer, party secretary, prosecutor) empowered to sentence to death or Gulag without trial."},
+  {d:"The Terror",t:"Key Event",q:"What was the 'Tukhachevsky Affair' (1937)?",a:"Marshal Tukhachevsky and seven top generals executed June 1937 on fabricated treason charges; devastated Red Army command."},
+  {d:"Soviet Society",t:"Key Term",q:"What was the 'Great Retreat' (1930s)?",a:"Stalin's reversal of revolutionary social policies: traditional family, discipline in schools, patriotism, and Russian nationalism restored."},
+  {d:"Soviet Society",t:"Statistic",q:"How did Soviet literacy rates change 1917–1939?",a:"Literacy rose from ~30% (1917) to 81% by the 1939 census — a major achievement of Soviet education policy."},
+  {d:"Soviet Society",t:"Key Term",q:"What was the 'Stalinist Constitution' (1936)?",a:"Declared USSR a socialist state with universal suffrage; in practice rights were meaningless given one-party rule."},
+  {d:"Soviet Society",t:"Statistic",q:"How did urbanisation change 1926–1939?",a:"Urban population doubled from ~26 million to ~56 million between 1926 and 1939."},
+  {d:"Soviet Society",t:"Key Term",q:"What were 'Vydvizhentsy'?",a:"'Promoted ones' — workers/peasants elevated to managerial and party positions in the 1930s, replacing purged specialists."},
+  {d:"Soviet Society",t:"Key Term",q:"What was 'Korenizatsiya' (indigenisation)?",a:"1920s policy promoting non-Russian languages and cultures in their republics; largely reversed by Russification in the 1930s."},
+  {d:"Soviet Society",t:"Key Term",q:"What were 'Subbotniki'?",a:"'Communist Saturdays' — voluntary unpaid work days for the collective good; Lenin famously participated in 1919."},
+  {d:"Soviet Society",t:"Key Term",q:"What was 'anti-cosmopolitanism' campaign (late 1940s)?",a:"Late-Stalinist campaign from 1948 targeting Jews and Western-oriented intellectuals — part of post-war intensification of terror."},
+  {d:"WW2 & USSR",t:"Key Term",q:"What was the Nazi-Soviet Pact (Molotov-Ribbentrop Pact)?",a:"Non-aggression pact signed 23 August 1939; secret protocol divided Eastern Europe into German and Soviet spheres."},
+  {d:"WW2 & USSR",t:"Key Date",q:"When did Germany invade the USSR (Operation Barbarossa)?",a:"22 June 1941. Germany deployed 3.8 million troops across a 2,900 km front — the largest military operation in history."},
+  {d:"WW2 & USSR",t:"Key Event",q:"What was the Battle of Stalingrad?",a:"August 1942 – February 1943: Germany's 6th Army encircled and destroyed; 800,000+ Axis casualties; Eastern Front turning point."},
+  {d:"WW2 & USSR",t:"Key Date",q:"When did Germany surrender at Stalingrad?",a:"2 February 1943. Field Marshal Paulus surrendered with ~91,000 survivors."},
+  {d:"WW2 & USSR",t:"Statistic",q:"Total Soviet deaths in World War Two?",a:"~26–27 million Soviet citizens (military and civilian) — the largest death toll of any country in the war."},
+  {d:"WW2 & USSR",t:"Key Event",q:"What was the Battle of Kursk (1943)?",a:"July 1943: Largest tank battle in history; Germany's last major Eastern Front offensive defeated; Soviets retook Orel and Kharkov."},
+  {d:"WW2 & USSR",t:"Key Term",q:"What was 'Lend-Lease'?",a:"US aid to USSR 1941–45: ~$11 billion worth including 400,000 trucks, 14,000 aircraft, 13,000 tanks — crucial to Soviet logistics."},
+  {d:"WW2 & USSR",t:"Key Term",q:"What was the 'Great Patriotic War'?",a:"Soviet term for the war against Nazi Germany 1941–45; emphasised Russian nationalism rather than communist ideology."},
+  {d:"WW2 & USSR",t:"Key Event",q:"What was the Siege of Leningrad?",a:"September 1941 – January 1944 (872 days): ~800,000–1 million civilians died mainly from starvation."},
+  {d:"WW2 & USSR",t:"Key Event",q:"What was the Battle of Moscow (1941)?",a:"October–December 1941: Germany failed to take Moscow; Soviet counter-offensive December 1941 pushed Germans back 150–300 km."},
+  {d:"WW2 & USSR",t:"Statistic",q:"How many Soviet soldiers were taken prisoner in 1941?",a:"~3.3 million Soviet POWs in 1941 alone; 5.7 million total — the majority died in German captivity."},
+  {d:"WW2 & USSR",t:"Key Term",q:"What was 'Not One Step Back' (Order 227)?",a:"Stalin's July 1942 order prohibiting retreat; created 'blocking units' (zagradotriad) to shoot soldiers who retreated."},
+  {d:"WW2 & USSR",t:"Key Event",q:"What was Operation Bagration (1944)?",a:"Summer 1944: massive Soviet offensive destroying German Army Group Centre; 350,000+ Germans killed/captured; began final push west."},
+  {d:"WW2 & USSR",t:"Key Event",q:"What was the Katyn Massacre?",a:"April–May 1940: NKVD executed ~22,000 Polish officers and intelligentsia on Stalin's orders; denied until 1990."},
+  {d:"WW2 & USSR",t:"Statistic",q:"How many Soviet civilians died in WW2?",a:"~17–19 million civilians out of ~27 million total Soviet dead — mass starvation, execution, and disease."},
+  {d:"Late Stalin",t:"Key Term",q:"What was 'Zhdanovism' (Zhdanovshchina)?",a:"Cultural crackdown 1946–48 under Andrei Zhdanov: attacked 'bourgeois' Western influences in literature, music, and film."},
+  {d:"Late Stalin",t:"Key Event",q:"What was the 'Doctors' Plot' (1953)?",a:"January 1953: Stalin accused mostly Jewish doctors of plotting to kill Soviet leaders; possibly prelude to mass terror; ended by Stalin's death."},
+  {d:"Late Stalin",t:"Key Date",q:"When did Stalin die?",a:"5 March 1953, of a stroke at his Kuntsevo dacha; possibly denied medical attention by terrified subordinates."},
+  {d:"Late Stalin",t:"Statistic",q:"How many were in the Gulag when Stalin died (1953)?",a:"~2.5 million prisoners in Gulag camps; another ~2.7 million in 'special settlements'."},
+  {d:"Late Stalin",t:"Key Term",q:"What was the 'Leningrad Affair' (1949)?",a:"Purge of Leningrad party leadership by Malenkov and Beria; ~2,000 officials arrested; key rivals eliminated."},
+  {d:"Late Stalin",t:"Key Term",q:"What was the 'Cold War'?",a:"Geopolitical tension between USSR and USA from ~1947 to 1991; no direct military conflict between the superpowers."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"What was the power struggle after Stalin's death?",a:"1953–55: Beria arrested and shot June 1953; Malenkov demoted; Khrushchev emerged as First Secretary, consolidating power by 1955."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"What was Khrushchev's 'Secret Speech'?",a:"February 1956, 20th Party Congress: Khrushchev denounced Stalin's cult of personality, purges, and crimes."},
+  {d:"Khrushchev 1953-64",t:"Key Date",q:"When was the 'Secret Speech'?",a:"25 February 1956, to a closed session of the 20th Party Congress in Moscow."},
+  {d:"Khrushchev 1953-64",t:"Key Term",q:"What was 'De-Stalinisation'?",a:"Khrushchev's policy from 1956: dismantling Stalin's cult, releasing Gulag prisoners, rehabilitating victims, cultural 'thaw'."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"What was the Hungarian Revolution (1956)?",a:"October–November 1956: Hungarian uprising crushed by Red Army; ~3,000 Hungarians killed; Imre Nagy executed."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"What was the 'Anti-Party Group' crisis (1957)?",a:"June 1957: Malenkov, Molotov, and Kaganovich attempted to oust Khrushchev; defeated using the Central Committee."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"When did Sputnik launch?",a:"4 October 1957: first artificial satellite; demonstrated Soviet technological achievement and shocked the West."},
+  {d:"Khrushchev 1953-64",t:"Key Term",q:"What was the 'Virgin Lands' campaign?",a:"From 1954: ploughing 36 million hectares of Kazakhstan/Siberian steppe for grain; initial successes then dust bowls."},
+  {d:"Khrushchev 1953-64",t:"Statistic",q:"How did grain output change under Khrushchev's Virgin Lands?",a:"Grain production rose from 82 million tonnes (1953) to 141 million tonnes (1958) — then became erratic."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"What was the Berlin Crisis (1961)?",a:"August 1961: Berlin Wall constructed; ~3.5 million East Germans had fled to the West 1949–61."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"What was the Cuban Missile Crisis (1962)?",a:"October 1962: USSR placed nuclear missiles in Cuba; 13-day standoff; resolved when Soviets withdrew missiles."},
+  {d:"Khrushchev 1953-64",t:"Key Term",q:"What was 'Peaceful Coexistence'?",a:"Khrushchev's doctrine: competition between capitalism and socialism could occur without nuclear war."},
+  {d:"Khrushchev 1953-64",t:"Key Date",q:"When was Khrushchev ousted?",a:"14 October 1964, replaced by Brezhnev (party) and Kosygin (government) while on holiday in Crimea."},
+  {d:"Khrushchev 1953-64",t:"Key Term",q:"What was the 'Thaw'?",a:"Cultural liberalisation 1953–64: Solzhenitsyn's 'One Day in the Life of Ivan Denisovich' published 1962; jazz tolerated; art less rigidly controlled."},
+  {d:"Khrushchev 1953-64",t:"Statistic",q:"How many Gulag prisoners were released under Khrushchev?",a:"~7–8 million prisoners released 1953–56 through amnesties and individual rehabilitation."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"What was the Sino-Soviet Split?",a:"By 1960 an open break between USSR and China over de-Stalinisation and peaceful coexistence; Soviet advisers withdrew."},
+  {d:"Khrushchev 1953-64",t:"Key Term",q:"What was the 'Sovnarkhozy' reform (1957)?",a:"Replaced economic ministries with regional economic councils; aimed at decentralisation; reversed after Khrushchev's fall."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"What was Yuri Gagarin's achievement?",a:"12 April 1961: Gagarin became first human in space, orbiting Earth in 108 minutes — major Soviet propaganda victory."},
+  {d:"Khrushchev 1953-64",t:"Statistic",q:"How many housing units were built under Khrushchev?",a:"Over 50 million people moved into new housing 1956–65 — the mass-produced 'Khrushchyovki' apartment blocks."},
+  {d:"Khrushchev 1953-64",t:"Key Event",q:"What was the U-2 Incident (1960)?",a:"US spy plane shot down over Soviet territory; pilot Gary Powers captured; Khrushchev used it to humiliate Eisenhower."},
+  {d:"Key Concepts",t:"Key Term",q:"What was 'Pan-Slavism'?",a:"Ideology promoting unity of Slavic peoples; used by Tsarist Russia to justify interference in the Balkans."},
+  {d:"Key Concepts",t:"Key Term",q:"What was 'Bolshevism'?",a:"Lenin's interpretation of Marxism: a disciplined 'vanguard party' of professional revolutionaries should lead the proletariat to revolution."},
+  {d:"Key Concepts",t:"Key Term",q:"What was 'Menshevism'?",a:"Faction of the SD party favouring a broader party open to workers; believed in a bourgeois-democratic revolution before socialism."},
+  {d:"Key Concepts",t:"Key Term",q:"What was the 'Vanguard Party'?",a:"Lenin's concept (in 'What is to be Done?' 1902) of a small, disciplined party of professional revolutionaries leading the working class."},
+  {d:"Key Concepts",t:"Key Term",q:"What is 'Marxism'?",a:"Karl Marx's theory: capitalism creates an alienated working class (proletariat) who will overthrow the bourgeoisie and create communism."},
+  {d:"Key Concepts",t:"Key Term",q:"What was 'Permanent Revolution'?",a:"Trotsky's theory: socialist revolution could not survive in one country and required world revolution — directly opposed by Stalin's 'Socialism in One Country'."},
+  {d:"Key Concepts",t:"Key Term",q:"What was 'Totalitarianism'?",a:"Political system claiming total control over all aspects of life — associated with both Stalinist USSR and Nazi Germany."},
+  {d:"Key Concepts",t:"Key Term",q:"Who was Plekhanov?",a:"Father of Russian Marxism; founded Emancipation of Labour group 1883; initially allied with Lenin then opposed Bolshevism."},
+  {d:"Key Statistics",t:"Statistic",q:"What was Russia's population in 1897 (census)?",a:"~125 million — the third most populous country in the world."},
+  {d:"Key Statistics",t:"Statistic",q:"What % of Russia's population were peasants in 1900?",a:"~82–85% of the population were peasants."},
+  {d:"Key Statistics",t:"Statistic",q:"How many political parties contested the Constituent Assembly 1917?",a:"~30 parties; SRs won 38%, Bolsheviks 24%, Kadets 5%, Mensheviks 3%."},
+  {d:"Key Statistics",t:"Statistic",q:"What was the USSR's steel output in 1913 vs 1940?",a:"1913: 4.2 million tonnes; 1940: 18 million tonnes — a fourfold increase."},
+  {d:"Key Statistics",t:"Statistic",q:"How many members did the Communist Party have in 1939?",a:"~2.3 million members (down from 3.5 million in 1933 due to the purges)."},
+  {d:"Key Statistics",t:"Statistic",q:"What was average life expectancy in the USSR 1926 vs 1955?",a:"1926: ~44 years; 1955: ~67 years — dramatic improvement despite war and famine."},
+  {d:"Key Statistics",t:"Statistic",q:"How many Jews lived in the Russian Empire in 1897?",a:"~5.2 million Jews in the Pale of Settlement — about 4% of the Empire's population."},
+  {d:"Key Statistics",t:"Statistic",q:"How many people lived in Soviet cities in 1913 vs 1953?",a:"1913: ~18 million urban; 1953: ~80 million urban — urbanisation was the biggest social change of the Soviet era."},
+  {d:"Key Statistics",t:"Statistic",q:"What was the USSR's GDP compared to the USA in 1960?",a:"Soviet GDP was ~44–50% of US GDP by Western estimates — a major gap despite industrialisation."},
+  {d:"Historiography",t:"Key Term",q:"What is the 'Intentionalist' interpretation of Stalin?",a:"Historians (Conquest, Bullock) argue Stalin had a master plan for terror; all major decisions were his personal choice."},
+  {d:"Historiography",t:"Key Term",q:"What is the 'Structuralist' interpretation of Stalinism?",a:"Historians (Getty, Rittersporn) argue terror was partly driven by chaos, bureaucratic dysfunction, and local initiative — not just Stalin's intent."},
+  {d:"Historiography",t:"Key Term",q:"Who was Robert Conquest?",a:"British historian whose 'The Great Terror' (1968) and 'Harvest of Sorrow' (1986) documented Stalin's purges and famine."},
+  {d:"Historiography",t:"Key Term",q:"Who was Sheila Fitzpatrick?",a:"American historian emphasising social history of Stalinism: popular participation, upward mobility, and the daily experience of ordinary people."},
+  {d:"Historiography",t:"Key Term",q:"What did Orlando Figes argue about the Russian Revolution?",a:"In 'A People's Tragedy' (1996): emphasised peasant culture, social chaos, and competing visions; revolution was contingent, not inevitable."},
+  {d:"Historiography",t:"Key Term",q:"What did Richard Pipes argue about the Revolution?",a:"In 'The Russian Revolution' (1990): a deliberate Bolshevik coup; emphasises Lenin's agency and ideology — an orthodox intentionalist view."},
+  {d:"Historiography",t:"Key Term",q:"What is the 'Revisionist' view of 1917?",a:"Historians (Suny, Smith) emphasise social history — workers, soldiers, peasants — rather than Lenin's role; revolution as a social process."},
+  {d:"Historiography",t:"Key Term",q:"What is 'Revisionist' historiography of Stalinism?",a:"Historians (Fitzpatrick, Getty) argue Stalinism was not all-powerful but driven by chaos, local initiative, and popular participation."},
+];
+
+const DECKS=["All Topics","Tsarist 1855-1881","Tsarist 1881-1905","1905 Revolution","Tsarist 1905-1914","WW1 & Feb Revolution","October Revolution","Civil War 1918-21","NEP & 1920s","Stalin's Rise","Collectivisation","Five Year Plans","The Terror","Soviet Society","WW2 & USSR","Late Stalin","Khrushchev 1953-64","Key Concepts","Key Statistics","Historiography"];
+
+let state={cards:[],queue:[],current:null,flipped:false,streak:0,activeDeck:"All Topics"};
+
+function sm2(card,q){
+  let{ef=2.5,interval=0,reps=0}=card;
+  if(q<2){reps=0;interval=1;}
+  else{if(reps===0)interval=1;else if(reps===1)interval=6;else interval=Math.round(interval*ef);reps++;}
+  ef=Math.max(1.3,ef+0.1-(3-q)*(0.08+(3-q)*0.02));
+  const due=Date.now()+interval*864e5;
+  return{ef,interval,reps,due};
+}
+
+function loadProgress(){try{return JSON.parse(localStorage.getItem('rh_v2')||'{}');}catch(e){return{};}}
+function saveProgress(){const d={};state.cards.forEach(c=>{d[c.q.slice(0,40)]={ef:c.ef,interval:c.interval,reps:c.reps,due:c.due};});try{localStorage.setItem('rh_v2',JSON.stringify(d));}catch(e){}}
+function resetProgress(){if(confirm('Reset all progress? This cannot be undone.')){localStorage.removeItem('rh_v2');location.reload();}}
+
+function shuffle(a){return a.sort(()=>Math.random()-0.5);}
+
+function initCards(){
+  const src=state.activeDeck==="All Topics"?ALL_CARDS:ALL_CARDS.filter(c=>c.d===state.activeDeck);
+  const saved=loadProgress();
+  state.cards=src.map(c=>Object.assign({},c,saved[c.q.slice(0,40)]||{ef:2.5,interval:0,reps:0,due:0}));
+  buildQueue();
+}
+
+function buildQueue(){
+  const now=Date.now();
+  const due=state.cards.filter(c=>c.due<=now&&c.reps>0);
+  const nw=state.cards.filter(c=>c.reps===0&&c.due===0);
+  state.queue=[...shuffle(due),...shuffle(nw)];
+}
+
+function updateStats(){
+  const now=Date.now();
+  document.getElementById('s-new').textContent=state.cards.filter(c=>c.reps===0&&c.due===0).length;
+  document.getElementById('s-due').textContent=state.cards.filter(c=>c.due<=now&&c.reps>0).length;
+  document.getElementById('s-learned').textContent=state.cards.filter(c=>c.interval>=6).length;
+  document.getElementById('s-streak').textContent=state.streak;
+}
+
+function showCard(){
+  if(state.queue.length===0){showDone();return;}
+  state.current=state.queue[0];
+  state.flipped=false;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('card-tag').textContent=state.current.t;
+  document.getElementById('card-tag-b').textContent=state.current.t;
+  document.getElementById('card-q').textContent=state.current.q;
+  document.getElementById('card-a').textContent=state.current.a;
+  document.getElementById('card-deck-tag').textContent=state.current.d;
+  document.getElementById('card-deck-tag-b').textContent=state.current.d;
+  document.getElementById('rating-row').style.display='none';
+  document.getElementById('rating-labels').style.display='none';
+  const total=state.cards.length;
+  const done=state.cards.filter(c=>c.reps>0).length;
+  document.getElementById('progress').style.width=(done/total*100)+'%';
+  document.getElementById('nav-pos').textContent=`Card ${state.queue.indexOf(state.current)+1} of ${state.queue.length} due`;
+  document.getElementById('nav-deck').textContent=state.activeDeck;
+  updateStats();
+}
+
+function flipCard(){
+  if(state.flipped)return;
+  state.flipped=true;
+  document.getElementById('card').classList.add('flipped');
+  document.getElementById('rating-row').style.display='flex';
+  document.getElementById('rating-labels').style.display='flex';
+}
+
+function rate(q){
+  const idx=state.cards.findIndex(c=>c.q===state.current.q);
+  Object.assign(state.cards[idx],sm2(state.cards[idx],q));
+  if(q>=2)state.streak++;else state.streak=0;
+  state.queue.shift();
+  if(q<2)state.queue.push(state.current);
+  saveProgress();
+  showCard();
+}
+
+function showDone(){
+  document.getElementById('card-zone').style.display='none';
+  document.querySelector('.flip-hint').style.display='none';
+  document.getElementById('rating-row').style.display='none';
+  document.getElementById('rating-labels').style.display='none';
+  document.getElementById('done-screen').style.display='block';
+  const learned=state.cards.filter(c=>c.interval>=6).length;
+  document.getElementById('done-msg').textContent=`You've cleared the queue. ${learned} of ${state.cards.length} cards are now in long-term memory. Come back tomorrow for your next review session!`;
+  updateStats();
+}
+
+function startSession(){
+  document.getElementById('done-screen').style.display='none';
+  document.getElementById('card-zone').style.display='block';
+  document.querySelector('.flip-hint').style.display='block';
+  buildQueue();
+  showCard();
+}
+
+function setupDecks(){
+  const el=document.getElementById('deck-select');
+  DECKS.forEach(d=>{
+    const btn=document.createElement('button');
+    btn.className='deck-btn'+(d===state.activeDeck?' active':'');
+    btn.textContent=d;
+    btn.onclick=()=>{
+      state.activeDeck=d;
+      document.querySelectorAll('.deck-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('done-screen').style.display='none';
+      document.getElementById('card-zone').style.display='block';
+      document.querySelector('.flip-hint').style.display='block';
+      initCards();showCard();
+    };
+    el.appendChild(btn);
+  });
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'){e.preventDefault();flipCard();}
+  if(e.key==='1')rate(0);
+  if(e.key==='2')rate(1);
+  if(e.key==='3')rate(2);
+  if(e.key==='4')rate(3);
+});
+
+setupDecks();initCards();showCard();
+</script>
+</body>
+</html>
